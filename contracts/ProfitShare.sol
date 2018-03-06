@@ -25,6 +25,9 @@ contract ProfitShare is StandardToken{
      */
     address[] public allUsers;
 
+    // whitelisted users
+    mapping(address => bool) whiteList;
+
     /**
      * Address which will receive raised funds 
      * and owns the total supply of tokens
@@ -53,7 +56,7 @@ contract ProfitShare is StandardToken{
      * 
      * We will calculate the Pshare amount and send to their wallets
      */
-    function() isIcoOpen checkMin payable{
+    function() isIcoOpen checkMin isInWhitelist payable{
         if(msg.sender == fundsWallet){
             totalShareable = msg.value;
             return shareProfits();
@@ -163,6 +166,14 @@ contract ProfitShare is StandardToken{
         _;
     }
 
+    /**
+     * Checks to make sure that the sender is in WhiteList
+     */
+    modifier isInWhitelist(){
+        require(whiteList[msg.sender] || msg.sender == fundsWallet);
+        _;
+    }
+
 
     /**
      * Check if an address is in the list or not
@@ -176,5 +187,21 @@ contract ProfitShare is StandardToken{
             }
         }
         return false;
+    }
+
+    /**
+     * Allows the admin to add user to whitelist
+     */
+    function adminAddWhiteList(address _address) isOwner returns(bool){
+        whiteList[_address] = true;
+        return true;
+    }
+
+    /**
+     * Allows the admin to remove a user from whitelist
+     */
+    function adminRemoveWhiteList(address _address) isOwner returns(bool){
+        whiteList[_address] = false;
+        return true;
     }
 }
