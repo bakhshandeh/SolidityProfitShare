@@ -11,7 +11,7 @@ contract ProfitShare is StandardToken{
     uint256 public decimals = 18;
 
     // 267M
-    uint256 public totalSupply = 267*1000000 * (uint256(10) ** decimals);
+    uint256 public totalSupply = 422370000 * (uint256(10) ** decimals);
     uint256 public totalRaised; // total ether raised (in wei)
 
     uint256 public totalShareable; // total shareable ethers (in wei)
@@ -34,13 +34,6 @@ contract ProfitShare is StandardToken{
      */
     address public fundsWallet;
 
-    //function ProfitShare(address admin) {
-    //    fundsWallet = admin;//0x8c7704eA2d934692B21419Bf2a5AC6165a45CE98;
-    //    balances[fundsWallet] = totalSupply;
-
-        // launch coins and send them to fundsWallet
-    //    Transfer(0x0, fundsWallet, totalSupply);
-    //}
 
     function ProfitShare() {
         fundsWallet = 0x8c7704eA2d934692B21419Bf2a5AC6165a45CE98;
