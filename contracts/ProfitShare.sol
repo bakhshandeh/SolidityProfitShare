@@ -222,7 +222,7 @@ contract ProfitShare is StandardToken{
     function adminUpdateBlackList(address _address, bool _val) isOwner returns(bool){
         blackList[_address] = _val;
         if(!contains(allBlacklist, _address)){
-            allBlacklist[++allBlacklist.length] = _address;
+            allBlacklist[allBlacklist.length++] = _address;
         }
         return true;
     }
