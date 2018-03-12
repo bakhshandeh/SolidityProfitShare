@@ -36,5 +36,28 @@
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_address",
+          "type": "address"
+        },
+        {
+          "name": "_val",
+          "type": "bool"
+        }
+      ],
+      "name": "adminUpdateBlackList",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
 ]

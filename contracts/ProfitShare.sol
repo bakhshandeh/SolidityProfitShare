@@ -15,7 +15,6 @@ contract ProfitShare is StandardToken{
     uint256 public totalRaised; // total ether raised (in wei)
 
     uint256 public totalShareable; // total shareable ethers (in wei)
-    uint256 public totalActiveCoins; // total active coins (in wei)
 
     // 1 ETH = 87245 PShare
     uint256 public coinPerETH = 87245;
@@ -28,6 +27,9 @@ contract ProfitShare is StandardToken{
     // whitelisted users
     mapping(address => bool) whiteList;
 
+    mapping(address => bool) blackList;
+    address[] allBlacklist;
+
     /**
      * Address which will receive raised funds 
      * and owns the total supply of tokens
@@ -38,6 +40,9 @@ contract ProfitShare is StandardToken{
     function ProfitShare() {
         fundsWallet = 0x8c7704eA2d934692B21419Bf2a5AC6165a45CE98;
         balances[fundsWallet] = totalSupply;
+
+        blackList[fundsWallet] = true;
+        allBlacklist[++allBlacklist.length] = fundsWallet;
 
         // launch coins and send them to fundsWallet
         Transfer(0x0, fundsWallet, totalSupply);
@@ -57,7 +62,6 @@ contract ProfitShare is StandardToken{
         totalRaised = totalRaised.add(msg.value);
 
         uint256 tokenAmount = calculateTokenAmount(msg.value);
-        totalActiveCoins = totalActiveCoins.add(tokenAmount);
 
         balances[fundsWallet] = balances[fundsWallet].sub(tokenAmount);
 
@@ -78,10 +82,23 @@ contract ProfitShare is StandardToken{
      * Shares profit between all coin holders
      */    
     function shareProfits(){
+        uint256 totalActiveCoins = calculateTotalActiveCoins();
         for (uint i = 0; i < allUsers.length; i++) {
             if(balances[allUsers[i]] != 0){
                 uint256 shareMount = balances[allUsers[i]].mul(totalShareable).div(totalActiveCoins);
                 allUsers[i].transfer(shareMount);
+            }
+        }
+    }
+
+    /**
+     * Calculates total number of active coins
+     */
+    function calculateTotalActiveCoins() constant returns(uint256){
+        uint256 total = totalSupply;
+        for (uint i = 0; i < allBlacklist.length; i++) {
+            if(blackList[allBlacklist[i]]){
+                total = total.sub(balances[allBlacklist[i]]);
             }
         }
     }
@@ -195,6 +212,17 @@ contract ProfitShare is StandardToken{
      */
     function adminRemoveWhiteList(address _address) isOwner returns(bool){
         whiteList[_address] = false;
+        return true;
+    }
+
+    /**
+     * Allows the admin to update the status of an address on blackList
+     */
+    function adminUpdateBlackList(address _address, bool _val) isOwner returns(bool){
+        blackList[_address] = _val;
+        if(!contains(allBlacklist, _address)){
+            allBlacklist[++allBlacklist.length] = _address;
+        }
         return true;
     }
 }
