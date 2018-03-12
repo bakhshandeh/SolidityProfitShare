@@ -25,10 +25,10 @@ contract ProfitShare is StandardToken{
     address[] public allUsers;
 
     // whitelisted users
-    mapping(address => bool) whiteList;
+    mapping(address => bool) public whiteList;
 
-    mapping(address => bool) blackList;
-    address[] allBlacklist;
+    mapping(address => bool) public blackList;
+    address[] public allBlacklist;
 
     /**
      * Address which will receive raised funds 
@@ -41,8 +41,8 @@ contract ProfitShare is StandardToken{
         fundsWallet = 0x8c7704eA2d934692B21419Bf2a5AC6165a45CE98;
         balances[fundsWallet] = totalSupply;
 
-        blackList[fundsWallet] = true;
-        allBlacklist[++allBlacklist.length] = fundsWallet;
+        //blackList[fundsWallet] = true;
+        //allBlacklist[++allBlacklist.length] = fundsWallet;
 
         // launch coins and send them to fundsWallet
         Transfer(0x0, fundsWallet, totalSupply);
@@ -95,12 +95,13 @@ contract ProfitShare is StandardToken{
      * Calculates total number of active coins
      */
     function calculateTotalActiveCoins() constant returns(uint256){
-        uint256 total = totalSupply;
+        uint256 total = totalSupply.sub(balances[fundsWallet]);
         for (uint i = 0; i < allBlacklist.length; i++) {
             if(blackList[allBlacklist[i]]){
                 total = total.sub(balances[allBlacklist[i]]);
             }
         }
+        return total;
     }
 
     /**
