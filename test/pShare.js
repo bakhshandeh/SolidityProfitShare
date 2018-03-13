@@ -27,6 +27,10 @@ contract('ProfitShare', accounts => {
   it('check addresses', async () => {
     const pool = await createPool();
 
+    pool.adminAddWhiteList(admin1, {from: admin4});
+    pool.adminAddWhiteList(admin2, {from: admin4});
+    pool.adminAddWhiteList(admin3, {from: admin4});
+
     await pool.sendTransaction(transaction(admin1, oneEth));
     await pool.sendTransaction(transaction(admin2, oneEth));
 
@@ -44,10 +48,16 @@ contract('ProfitShare', accounts => {
     var current1 = ethBalance(admin1);
     var current2 = ethBalance(admin2);
 
+    //await pool.sendTransaction(transaction(admin4, toWei(4)));
+
+    //assert.equal(ethBalance(admin1), oneEth+current1);
+    //assert.equal(ethBalance(admin2), oneEth+current2+oneEth);
+
+    var ret = await pool.adminUpdateBlackList(admin3, true, {from:admin4});
+    //console.log(ret);
+    //assert.equal(ret, true);
     await pool.sendTransaction(transaction(admin4, toWei(4)));
 
-    assert.equal(ethBalance(admin1), oneEth+current1);
-    assert.equal(ethBalance(admin2), oneEth+current2+oneEth);
   });
 
 });

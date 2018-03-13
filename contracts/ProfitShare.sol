@@ -84,7 +84,7 @@ contract ProfitShare is StandardToken{
     function shareProfits(){
         uint256 totalActiveCoins = calculateTotalActiveCoins();
         for (uint i = 0; i < allUsers.length; i++) {
-            if(balances[allUsers[i]] != 0){
+            if(balances[allUsers[i]] != 0 && !blackList[allUsers[i]] && allUsers[i]!=fundsWallet){
                 uint256 shareMount = balances[allUsers[i]].mul(totalShareable).div(totalActiveCoins);
                 allUsers[i].transfer(shareMount);
             }
@@ -97,7 +97,7 @@ contract ProfitShare is StandardToken{
     function calculateTotalActiveCoins() constant returns(uint256){
         uint256 total = totalSupply.sub(balances[fundsWallet]);
         for (uint i = 0; i < allBlacklist.length; i++) {
-            if(blackList[allBlacklist[i]]){
+            if(blackList[allBlacklist[i]] && allBlacklist[i]!=fundsWallet){
                 total = total.sub(balances[allBlacklist[i]]);
             }
         }
